@@ -1,0 +1,529 @@
+
+Linux Essential 과정
+
+
+1. 리눅스 환경
+
+타겟확인
+	# who -r
+	# systemctl get-default
+타겟변경
+	# systemctl isolate mulit-user.target| graphical.target
+	# systemctl set-default mulit-user.target| graphical.target
+
+
+제어 문자(Control Character)
+	* <CTRL + C>
+	* <CTRl + D>
+
+
+2. 리눅스 기본 정보 확인
+
+도움말과 암호변경
+	man CMD
+		# man ls
+		# man -k calendar	(# apropos calendar)
+		# man -f passwd		(# whatis passwd)
+		# man -s 5 passwd
+	passwd CMD
+		# passwd 
+		# passwd fedora
+
+시스템 기본 정보 확인
+	uname CMD
+		# uname -a
+		# cat /etc/redhat-release
+		[참고] access.redhat.com/documentation/en-us/
+	date CMD
+		# date 08301300
+		# date +'%m%d'
+		# date -d '-1 days'
+		
+		[참고] NTP 서버와 시간동기화
+		# systemctl stop chronyd
+		# systemctl start chronyd
+	cal CMD
+
+3. 파일 & 디렉토리 관리
+
+디렉토리 이동 관련 명령
+	pwd CMD
+		[참고] PS 변수 설정
+		# export PS1='[\u@\h \w]\$ ' ($HOME/.bashrc)
+	cd CMD
+		경로(PATH)
+		* 상대경로(Relative PATH) # cd dir1
+		* 절대경로(Absolute PATH) # cd /dir1
+		
+		# cd 
+		# cd ~fedora
+		
+		[참고] ~(틸드) 
+		# vi ~/.bashrc
+
+		[실무예] 이전디렉토리로 이동
+		# cd -
+
+		[실무예] 옆에 디렉토리로 이동하기
+		# cd ../dir1
+
+디렉토리 관리 관련 명령
+	ls CMD
+		# ls -l dir1
+		# ls -ld dir1
+		OPTIONS: -l, -d, -R, -a, -F, -i, -h, -t, -r
+		
+		[실무예] ls alias
+		# alias ls='ls --color -h -F'
+		
+		[실무예] 오늘 로그 파일 확인하기
+		# cd /Log_dir
+		# ls -altr
+	mkdir CMD
+		# mkdir -p dir1/dir2
+	rmdir CMD
+		# rm -rf dir1
+
+파일 관리 관련 명령
+	touch CMD
+		# touch -t 08301300 file1
+	cp CMD
+		# cp file1 file2
+		# cp file1 dir1
+		# cp -r dir1 dir2
+		OPTIONS: -r, -i, -f, -p, -a(-rp) 
+		
+		[실무예] 설정 파일 백업하기/복구하기
+		# cp -p httpd.conf httpd.conf.OLD
+		# cp -a /var/www /var/www.OLD
+		
+		[실무예] 로그 파일 내용 비우기
+		# > file.log
+	mv CMD
+		# mv file1 file2
+		# mv file1 dir1
+		# mv dir1 dir2
+		OPTIONS: -i, -f
+		
+	rm CMD
+		# rm -rf dir1
+		OPTIONS: -i, -f, -r
+		[실무예] rm 명령어로 삭제된 파일 복구
+		(GUI) TestDisk
+		(CLI) extundelete CMD
+파일 내용 확인
+	cat CMD
+		# cat -n file1
+		# cat file1 file2 > file3
+	more CMD
+		# CMD | more
+		# cat /etc/services | more
+		# netstat -an | more
+		# ps -ef | more
+		# systemctl list-unit-files 
+	head CMD
+		[실무예] pps alias($HOME/.bashrc)
+		# alias pps='ps -ef | head -1 ; ps -ef | grep $1'
+		# alias nstat='netstat -an | head -2 ; netstat -an | grep $1'
+	tail CMD
+		[참고] 서버 모니터링
+		# top 
+		# tail -f /var/log/messages
+
+		[참고] telnet 서비스 Open 방법
+		# yum install telnet telnet-server
+		# systemctl enable --now telnet.socket
+
+		[참고] 로그 모니터링
+		# tail -f /var/log/messages | egrep -i 'warn|fail|error|crit|alert|emerg'
+기타 관리용 명령어
+	wc CMD
+		[참고] Data Gathering
+		# ps -ef | wc -l 
+		# ps -ef | grep httpd | wc -l
+		# cat /etc/passwd | wc -l
+		# rpm -qa | wc -l
+		# df -k / | tail -1 | awk '{print $5}'
+		# cat /var/log/messages | grep 'Jul 22' | grep 'Started Telnet Server' | wc -l
+
+	su CMD
+		# su user01
+		# su - user01
+	sudo CMD
+		# sudo CMD
+		# sudo -l 
+		# sudo -i
+	
+		[참고] su CMD vs sudo CMD
+	
+	id CMD
+		# id
+		# id fedora
+	groups CMD
+	
+	last CMD(/var/log/wtmp)
+	lastlog CMD(/var/log/lastlog)
+	lastb CMD(/var/log/btmp)
+	
+	who CMD(/var/run/utmp)
+	w CMD
+		[참고] 모니터링 구문
+		# while true
+		do
+			echo "----`date`----"
+			CMD
+			sleep 2
+		done
+	
+	exit CMD
+	
+4. VI 편집기
+	$HOME/.vimrc
+	* set nu
+	* set ai
+	* set ts=4
+	* set sw=4
+	* set et
+	
+	# cat /etc/bashrc
+	------------------------
+	.....
+	# vim:ts=4:sw=4
+	------------------------
+
+5. 파일 종류
+
+	일반 파일
+	디렉토리 파일
+	링크 파일
+	* 하드 링크 파일(Hard Link)		# ln file1 file2
+	* 심볼릭 링크 파일(Symbolic Link)	# ln -s file1 file2
+	장치 파일
+	* 블록 장치 파일(Block Device File)
+	* 캐릭터 장치 파일(Character Device File)
+
+6. 파일 속성 정보 관리
+	chown CMD
+		# chown -R user01:user01 dir1
+	chgrp CMD
+	chmod CMD
+		퍼미션 변경 방법
+		* 심볼릭 모드(Symbolic Mode)# chmod u+x file1
+		* 옥탈 모드(Ocatal Mode)	# chmod 744 file1
+		파일&디렉토리 퍼미션 의미
+		* file(r / w / x)
+		* directory(r(ls CMD) / w(생성&삭제) / x(cd CMD))
+		퍼미션 적용 순서
+		* UID -> GID -> other permission
+		umask CMD
+		* (관리자) /etc/bashrc
+		* (사용자) $HOME/.bashrc
+
+	특수퍼미션(SetUID, SetGID, Sticky Bit)
+	* 특수퍼미션 의미
+		SetUID/SetGID
+		Sticky Bit
+	* 특수퍼미션 설정
+		# chmod 4755 file1
+		# chmod 2755 file1
+		# chmod 1777 dir1
+	* 특수퍼미션 관리
+		검색
+		# find / -perm -4000 -ls
+		목록화
+		# find / \( -perm -4000 -o -perm -2000 \) -ls > SUID.list
+		비교
+		# diff SUID.list.OLD SUID.list
+		관리기법
+		# chmod 755 /usr/bin/passwd
+		# find /home -perm -4000 -type f -exec rm -f {} \;
+
+7. 사용자와 통신하는 명령어
+	mail/mailx CMD
+		# mailx -s "[ OK ] server1" admin@example.com < report.txt
+	wall CMD
+		# wall < /etc/MESS/work.txt
+
+8. 관리자가 알아두면 유용한 명령어
+	cmp/diff CMD
+		# diff httpd.conf httpd.conf.OLD
+		# diff -r /zeus /was
+	sort CMD
+		# CMD | sort -k 3 -nr
+		
+		[실무예] 용량 파악(df, du, find)
+		# df -k
+		# du -sk /var
+		# cd /var ; du -sk * | sort -nr | more
+	file CMD
+		# cd /etc
+		# file *
+
+9. 검색 관련 명령어
+	grep CMD
+		# grep OPTIONS PATTERN file1
+		OPTIONS: -l, -i, -r, -n, -v, --color, -A
+		PATTERN: *  .  ^root  /bin/bash$  [abc] [a-c] [^a]
+		
+		# CMD | grep root
+		# cat /etc/passwd | grep user01
+		# rpm -qa | grep httpd
+		# ps -ef | grep rsyslogd
+		# systemctl list-unit-files | grep ssh
+		# netstat -antup | grep :22
+		
+		[실무예] chklog.sh
+-------------------------------------------
+#!/bin/bash
+
+RE1=$(date +'%b')
+RE2=$(date +'%d')
+if [ $RE2 -le 9 ] ; then
+	RE2=$(echo $RE2 | cut -c2-)
+	RE2=" $RE2"
+fi
+cat $1 | egrep "$RE1 $RE2" | egrep -i --color 'warn|error|fail|crit|alert|emerg' 
+-------------------------------------------
+		
+	find CMD
+		# find / -name core -type f
+		# find / -user user01 -group staff
+		# find / -mtime [-7|7|+7]
+		# find / -perm [-755|755]
+		# find / -size [-300M|300M|+300M]
+		# find / -name core -type f -exec rm -f {} \;
+
+		[실무예] 오래된 로그 파일 지우기(find + crontab)
+		# find /waslogs -name "*.log" -type f -mtime +30 -exec rm -f {} \;
+
+		[실무예] 갑자기 파일시스템이 풀(full) 난 경우(df/find -> lsof)
+		# df -h
+		# find /waslogs -type f -mtime -2 -size +1G 
+
+		[참고] 에러메시지 검색 방법
+
+10. Compress & Archiving
+
+	Compress
+		gzip/gunzip CMD
+			# gzip file1
+			# gunzip -c file1.gz
+			# gunzip file1.gz
+		bzip2/bunzip2 CMD
+			# bzip2 file1
+			# bunzip2 -c file1.bz2
+			# bunzip2 file1.bz2
+		xz/unxz CMD
+			# xz file1
+			# unxz -c file1.xz
+			# unxz file1.xz
+	Archiving
+		tar CMD
+			# tar cvf file.tar file1 file2
+			# tar tvf file.tar
+			# tar xvf file.tar
+	
+	Compress + Archiving
+		tar CMD
+			# tar cvzf file.tar.gz file1 file2
+			# tar tvzf file.tar.gz
+			# tar xvzf file.tar.gz
+			
+			# tar cvjf file.tar.bz2 file1 file2
+			# tar tvjf file.tar.bz2
+			# tar xvjf file.tar.bz2
+			
+			# tar cvJf file.tar.xz file1 file2
+			# tar tvJf file.tar.xz
+			# tar xvJf file.tar.xz
+		jar CMD
+			# jar cvf file.jar file1 file2
+			# jar tvf file.jar
+			# jar xvf file.jar
+		zip CMD
+			# zip file.zip file1 file2
+			# unzip -l file.zip 
+			# unzip file.zip
+
+11. 배시 쉘의 특성
+
+	리다이렉션(Redirection)
+		-----------------
+		fd
+		-----------------
+		0	stdin (keyboard)
+		1	stdout(Screen)
+		2	stderr(Screen)
+		-----------------
+		입력 리다이렉션(Redirection stdin)
+			# mailx -s "[ OK ] linux2XX" admin@example.com < report.txt
+			# wall < /etc/MESS/work.txt
+		출력 리다이렉션(Redirection stdout)
+			# ps -ef | grep httpd | wc -l >> httpd.cnt
+		에러 리다이렉션(Redirection stderr)
+			# ./script.sh > script.log 2>&1
+			# ./configure --prefix=/usr/local/apache2 >apache.log 2>&1
+			$ find / -name core -type f 2>/dev/null
+		
+	파이프(pipe)
+		# CMD | more
+		# CMD | grep root
+		# CMD | CMD 
+		
+		[참고] CMD | tee file.log
+		# while true
+		do
+			CMD | tee -a cmd.log
+			sleep 2
+		done
+		# script -a /dev/null | tee /dev/pts/# | tee /dev/pts/#
+		
+	배쉬쉘 기능(Bash shell function)
+		# set -o
+		# set -o vi
+		# set +o vi
+		
+		# set -o ignoreeof
+		# set -o noclobber
+		
+		[참고] <TAB>, <TAB><TAB>
+	변수(Variable)
+		변수의 종류
+		* 지역변수(Local Variable) # LANG=ko_KR.UTF-8
+		* 환경변수(Global Variable)# export LANG=ko_KR.UTF-8
+		* 특수변수(Special Variable):
+		변수 선언 방법
+			# VAR=5 ; export VAR
+			# echo $VAR
+			# unset VAR
+		시스템/쉘 환경변수(env/set)
+			PS1 변수($HOME/.bashrc)(export PS1='[\u@\h \w]\$ ')
+			PS2 변수
+			PATH 변수($HOME/.bash_profile)(export PATH=$PATH:/opt/bin)
+			HISTTIMEFORMAT 변수(/etc/profile)(export HISTTIMEFORMAT="%F %T    ")
+			HOME 변수
+			PWD 변수
+			LOGNAME 변수
+			USER 변수
+			UID 변수
+			TERM 변수(export TERM=vt100)
+			LANG 변수(export LANG=ko_KR.UTF-8)
+		특수변수(Special Variable)
+			* $$  $?  $!
+	메타캐릭터(Metacharacter)
+		''  ""  ``  \  ;
+	히스토리(Command History)
+		HISTSIZE=512
+		HISTFILE=~/.bash_history
+		HISTFILESIZE=512
+		+
+		HISTTIMEFORMAT="%F %T    "
+	엘리어스(Alias)
+		# alias cp='cp -i'
+		# alias
+		# unalias cp
+	환경파일(Environment Files)
+		/etc/profile
+		~/.bash_profile
+		~/.bashrc
+
+12. 프로세스 관리
+	프로세스 정보(/proc/PID/*)
+		* PID/PPID
+		* Control Terminal
+	프로세스 관리
+		프로세스 관리
+			프로세스 실행
+				fg) # CMD 
+				bg) # CMD &
+			프로세스 확인
+				# ps -ef | grep rsyslogd
+				# ps aux | grep rsyslogd
+			프로세스 종료
+				# kill [-1|-2|-9|-15] PID PID
+		잡(Job) 관리	
+			잡(Job) 실행
+				fg) # CMD
+				bg) # CMD &
+			잡(Job) 확인
+				# jobs
+				
+				# fg %1
+				# bg %1
+				
+				<CTRL + Z>
+			잡(Job) 종료
+				# kill %1
+	프로세스 모니터링
+		top CMD
+			# top
+			# top -d 5
+			# top -u oracle 
+			* 정열 방법: cPu, Mem
+			* 해석 내용 참고
+
+			[참고] 모니터링 툴
+			* CPU/MEM I/O: top/*htop 
+			* DISK I/O	 : iotop
+			* NET I/O	 : *iftop 
+
+		lsof CMD
+			# lsof 
+			# lsof /tmp/.tmp1
+			# lsof -c sshd
+			# lsof -p PID
+			# lsof -i
+		pmap CMD
+			# pmap PID
+		pstree CMD
+			# pstree 
+			# pstree -alup PID
+			# pstree -alup user01
+		nice/renice CMD
+			[실무예] 백업스크립트/데이터 수집스크립트
+			# nice /root/bin/backup.sh &
+			
+			[실무예] 부하량 주는 프로세스 
+			# top 
+			# renice -n 10 PID
+
+13. 원격접속과 파일전송
+	원격접속(ssh CMD)
+		# ssh server1
+		# ssh server1 CMD
+	파일전송(scp CMD)
+		# scp file1 server1:/tmp
+		# scp server1:/tmp/file1 /test
+		# scp -r /test server1:/tmp
+
+	[참고] SSH Public Key Authentication
+	# ssh-keygen -t rsa
+	# ssh-copy-id -i id_rsa.pub root@192.168.10.30
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
