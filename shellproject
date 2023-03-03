@@ -1,0 +1,234 @@
+# my-newoutsidedisk-1
+linux basic courses
+https://knowledge.broadcom.com/external/article/28212/ftp-ascii-vs-binary-mode-what-it-means.html
+
+(1) Windows와 Linux/Unix의 Enter에 대한 차이점
+● (WIN )    ENTER - \r\n     (<CTRL + M><CTRL + J>)
+● (*NIX)    ENTER - \n       (<CTRL + J>)
+
+(2) FTP에서 파일 전송시 ASCII/BINARY 선택시 차이점
+FTP에서 파일 전송시 전송 방식을 ASCII 모드를 설정한 경우
+● (WIN)   내용\r\n -------------> (WIN ) 내용\r\n
+● (*NIX)    내용\n   -------------> (*NIX) 내용\n 
+
+● (WIN)   내용\r\n --> \r 제거 --> (*NIX) 내용\n
+● (*NIX)    내용\n   --> \r 추가 --> (WIN ) 내용\r\n 
+
+FTP에서 파일 전송시 전송 방식을 BINARY 모드를 설정한 경우
+● (WIN)   내용\r\n -------------> (NIX) 내용\r\n
+● (*NIX)    내용\n   -------------> (WIN) 내용\n
+
+(3) 문제가 언제 발생하는가?
+FTP에서 파일 전송시 BINARY 파일을 ASCII 전송 방법을 사용하여 전송하는 경우
+● *NIX에서 windows 쪽으로 파일을 전송할 때 ascii 모드로 전송하는 경우 파일의 모든 <CTRL + J> 앞에 <CTRL + M> 추가하게 된다. 이렇게 하면 ASCII/TEXT 파일을 Windows에서 읽을 수 있다. 
+● 반대로 "ASCII" 모드의 파일을 Windows에서 *NIX 시스템으로 보내면, <CTRL + M><CTRL + J> 조합이 <CTRL + J>로 변경된다. 파일의 크기는 Windows에서 *NIX 시스템 보낼때 라인(line) 당 1byte씩 줄어들고, *NIX에서 windows로 보낼 때는 라인당 1 byte씩 증가한다. 
+● 문제가 생기는 경우는 ASCII 전송 모드로 BINARY 데이터를 전송하는 경우이다. 이런 경우 binary 데이터를 더 이상 읽을 수 없도록 수정이 된다.
+
+(4) 어떻게 사용하는 것이 좋은가?
+● 현재 사용되는 고급 편집기(대부분의 편집기)는 \n, \r\n을 2개다 인식한다. ascii/text 데이터는 ascii 전송 방식으로 적당하며, binary 데이터는 binary 전송 방식으로 전송하는 적절하다. 
+● ascii/text 데이터를 binary 전송 방식으로 전송하면 받은 파일을 고급 편집기가 읽어 들이기 때문에 이상이 없지만, binary 파일을 ascii 전송 방식으로 전송하면 내용의 변화가 생길수 있다. 
+● 따라서, 권장은 Binary 전송 방식을 사용하는 것이다. 그럼 2가지 경우 모두 이상이 없다.gnome-logs : log viewer for the systemd journal
+● gnome-logs shows events from the systemd journal, and sorts them into categories, such as hardware and applications. Using gnome-logs you can search your logs by typing a search term, and view detailed information about each event by clicking on it.
+
+# yum install gnome-logs
+
+(2) rsyslogd 체계
+
+리눅스 시스템에서 기존에 존재하는 로그 파일을 쓰지 않고 새로운 로그 파일을 생성하거나, 또는 로그 레벨을 변경하여 더 많은 메세지를 남기도록 하기 위해서는 /etc/rsyslog.conf 파일의 이해와 syslog 체계에 대해서 알아 두어야 한다. 리눅스 운영체제에서 메세지 생성에 관해서는 rsyslogd 데몬에 의해서 총괄 관리 되고 있다. 시스템 메세지가 생성이 되면 메세지는 rsyslogd 데몬에게 전달이 되고 rsyslogd 데몬은 /etc 디렉토리에 존재하는 rsyslog.conf 파일의 설정을 확인 하여 적당한 위치로 로그 기록을 출력 하게 된다. 
+
+/etc/rsyslog.conf 파일에는 "어디에서 메세지가 생성이 되면 어디에 메세지를 남겨라"라고 설정 되어 있다. 그럼, syslogd 데몬은 /etc/rsyslog.conf 파일에 설정된대로 생성된 메세지를 적당한 곳에 기록하게 된다. 시스템 로깅 관리는 rsyslogd 데몬을 통해 이루어지고, rsyslogd 데몬이 읽어 들이는 주설정 파일이 /etc/rsyslog.conf 파일이기 때문에 시스템 관리자에게 /etc/rsyslog.conf 파일을 관리하는 것은 중요한것이다.
+# gnome-logs &
+● Important
+● All
+● Applications
+● System
+● Security
+● Hardware
+■ 시스템 저널 항목 - 개수 지정
+
+문제 해결 및 감시를 위해 저널을 성공적으로 사용하는 핵심은 관련 출려만 표시하도록 저널 검색을 제한하는 것이다. 기본적으로 journalctl -n 명령은 최근의 10개 로그 항목을 표시한다. 표시할 로그 항목 수를 지정하는 선택적 인수로 이를 조정할 수 있다. 
+
+최근 10개의 로그 항목 표시/최근 5개의 로그 항목 표시
+# journalctl -n
+# journalctl -n 5
+# journalctl -o verbose
+
+특정 프로세스 또는 ㅇ벤트와 관련된 행을 검색하는 데 사용할 수 있는 시스템 저널의 공통 필드가 있다.
+● _COMM : command name
+● _EXE : process 실행 파일 경로
+● _PID : process pid
+● _UID : process 실행하는 사용자의 uid
+● _SYSTEMD_UNIT : process 시작한 systemd UNIT
+[참고] 시스템 저널 기록을 영구 저장하기
+# vi /etc/systemd/journald.conf
+Storage=persistent
+systemctl restart systemd-journald
+
+or
+
+# cat /etc/systemd/journald.conf
+Storage=auto
+
+# mkdir -p /var/log/journal
+# chown root:systemd-jounal /var/log/journal
+# chmod g+s /var/log/journal
+# systemctl restart systemd-journald
+(1) SSH 서버 프로그램 설치 및 설정 파일 확인
+
+   패키지: openssh, openssh-clients, openssh-askpass, openssh-server 
+   ------ SSH Server -----
+
+   sshd(22/TCP)
+   /etc/ssh/sshd_config 
+
+   ssh CMD
+   /etc/ssh/ssh_config
+
+   -------------------------
+
+   ▶ openssh        : ssh-keygen, scp
+   ▶ openssh-clients   : ssh, slogin, ssh-add, sftp
+   ▶ openssh-askpass   : X11 passphrase
+   ▶ openssh-server      : sshd
+
+   ■ 프로그램: openssh, openssh-clients, openssh-askpass, openssh-server 
+   ■ 데몬 & 포트 & 프로토콜: sshd(22/tcp)
+   ■ 주설정 파일: /etc/ssh/sshd_config(sshd), /etc/ssh/ssh_config(ssh CMD)
+   ■ 서비스: sshd.service 
+   ■ sshd(22) : ssh/scp/sftp
+   NTP 서버에서 사용되는 용어에 대해 알아보자. 
+ 
+(1). 기본적인 용어
+■ Reference Clock      - GMT, UTC과 같이 표준시간(기준시간) 또는 참고 시간
+                            (예: 한국 : GMT/UTC + 9 시간)
+■ Strata               - NTP 서버의 계층적 구조
+■ Stratum-1 Server     - NTP 1계층 서버
+   Stratum-2 Server     - NTP 2계층 서버
+   ...    -15 ....      - NTP 15계층 서버(15까지 존재)
+■ Drift File           - PPM(Parts-Per-Million)단위로 오프셋에 일치하는 단일 부동 소수
+                            점이 들어가 있다.
+                            (2). 추가적인 용어
+■ Resolution             - 시간 제공 장치에서 사용하는 시간의 최소 단위.
+                              (예) 손목시계의 Resolution : 1초
+■ Precision              - 컴퓨터 프로그램에서 사용하는 시간의 최소 단위.
+■ Accuracy                - 시간의 정확성. 기준시간(UTC)과 얼마나 근접한가를 나타냄.
+■ Jitter                - 시간을 측정했을 때 생기는 오차 중 작은 값.
+■ Wander                  - 시간을 측정했을 때 생기는 오차 중 큰 값.
+NTP Server
+● 패키지: chrony
+● 데몬 & 포트 & 프로토콜: chronyd(123/udp)
+● 주설정 파일: /etc/chrony.conf
+● 서비스: chronyd.service
+■ MariaDB 대해서(https://namu.wiki/w/MariaDB)
+● MySQL이 오라클(Oracle)로 넘어간 뒤, 불확실한 라이선스 문제를 해결하려고 나온 오픈 소스 DBMS. 2009년에 MySQL AB 출신 개발자들이 따로 나와 MariaDB 재단을 세워서 개발하고 있다. MySQL이 오픈오피스라면 MariaDB는 리브레오피스 2013년 현재 기능적으로는 MySQL과 동일하며, 성능은 더 낫다. 오라클로 인수된 뒤 MySQL 기능 추가가 제대로 이뤄지지 않고 있다.
+● 구현 언어는 C++이며 2016년 3월 15일 기준 2,098,413줄의 코드로 이뤄져 있다. MariaDB에서 먼저 구현된 기능이 MySQL에도 반영되기도 한다.
+● 초창기 버전인 MariaDB 5.5 버전은 MySQL 5.5 버전을 기반으로 포크했기 때문에 MySQL 5.5 버전과 거의 모든 기능이 호환된다. 그 이후 나온 10.0 버전은 MySQL 5.6에서 업데이트된 기능을 반영한 버전이다. 10.1 버전은 MySQL 5.7에서 추가 및 변경된 기능을 반영하여 출시되었다. MySQL과의 호환성을 최대한 유지하면서 좀더 나은 성능을 구현하는 것이 주된 개발 방향인 듯하다. 10.2부터는 MySQL의 개발 속도를 앞서나가서 오히려 이쪽 기능이 MySQL로 역수출되고 있는 실정이다.
+쉘에서 실행되는 종류(ex: bash 쉘 기준)
+   (ㄱ) 쉘 내부/쉘 내장 명령어(EX: if, while, ...)
+   (ㄴ) 엘리어스(EX: alias ls='ls -al')
+        함수(EX: a () { CMD ; CMD; CMD }    
+   (ㄷ) 디스크 내에 존재하는 명령어(EX: /bin/ls)
+   쉘 스크립트 작성시 필요한 필수 명령어
+● grep CMD
+● sed CMD
+● awk CMD
+● 기타명령어(sort, cut, uniq, tr, split, paste, head, tail, wc)
+■ grep 명령어 형식
+# grep OPTIONS PATTERN file1
+OPTIONS: -i, -l, -n, -v, -w, --color, -r  
+PATTERN: *  .  ^root  root$  [abc] [a-c] [^a]
+
+■ 많이 사용되는 grep 명령어 형식
+# CMD | grep xinetd 
+# cat /etc/passwd | grep root 
+# ps -ef | grep httpd 
+# netstat -an | grep :22 
+# rpm -qa | grep vsftpd 
+# systemctl list-unit-files | grep sshd 
+
+■ OPTIONS
+(-i OPTIONS) # grep -i nFS /etc/passwd        /* -i : ignore case */
+(-v OPTIONS) # grep -v root /etc/passwd       /* -v : inVerse, except */
+             # ps -ef | grep bash | grep -v grep 
+(-n OPTIONS) # grep -n root /etc/group        /* -n : number line */
+(-l OPTIONS) # grep -l root /etc/hosts /etc/passwd /etc/shadow  /* -l : list file */
+             # find /etc -type f -exec grep -l 'eth0' {} \;
+(-r OPTIONS) # grep -r eth0 /etc/*          /* -r : recursive */
+(--color OPTIONS) # alias grep='grep --color -i'
+(-w OPTIONS) # ps -ef | grep -w rsyslogd    /* -w : word, exactly */
+
+■ PATTERNS(https://recipes4dev.tistory.com/157)
+(. pattern) 1문자의 all
+# grep -i 'no...y' /etc/passwd    # no...y => nobody, Nobody
+(* pattern) 앞문자가 0회 이상 반복
+# grep 'ro*t' /etc/passwd      # ro*t => rt, rot, root, rooot, roo..ot
+(? pattern) 앞문자가 0또는 1회 반복   # colou?r => color, colour
+({m} pattern) 앞문자가 m번 반복      # ro{2}t => root
+({m,n} pattern) 앞문자가 m번 이상 n번 이하 반복   # ro{1,2}t => rot, root
+([abc] pattern) 선택적인 한문자      # [bl]eg => beg, leg
+([a-c] pattern) 선택적인 한문자
+([^a] pattern) 제외시킬 한문자
+(^root pattern) 라인의 처음에 매칭되는
+# grep '^root' /etc/group 
+# ls -l | grep '^-' 
+# ls -l | grep '^d' 
+(root$ pattern) 라인의 끝에 매칭되는
+# grep 'root$' /etc/group 
+# grep '/bin/bash$' /etc/passwd 
+sed 명령어 형식
+# sed [-n] 'addressCMD' file1
+   * address : addr1,addr2
+   * CMD     : p, d, s
+# sed [-n] '/pattern/CMD' file1
+
+■ p CMD 사용하는 방법(print)
+# sed -n '1,3p' /etc/hosts         (# head -3 /etc/hosts)
+# sed -n '/root/p' /etc/passwd     (# grep root /etc/passwd)
+
+# sed -n '1,/adm/p' /etc/passwd 
+# sed -n '10,$p' /etc/passwd       (# tail -n +10 /etc/passwd)
+# sed -n '3p' /etc/passwd           (# sed -n '3,3p' /etc/passwd)
+
+# export LANG=en_US.UTF-8 
+# cat /etc/passwd | sed -n '/^root/,/^adm/p'
+
+■ d CMD 사용하는 방법(delete)
+# sed '1,3d' /etc/hosts 
+# sed '3d' /etc/passwd       (# sed '3,3d' /etc/passwd)
+# sed '3,$d' /etc/passwd 
+# sed '$d' /etc/passwd 
+# sed '/root/d' /etc/passwd      (# grep -v root /etc/passwd)
+# sed '/^127.0.0.1/,/^172.16.6.2XX/d' /etc/hosts
+
+■ s CMD 사용하는 방법(substitution)
+
+   vim (:1,3s/root/ROOT/g)
+   vim (:1,3s/RE/ROOT/g)
+
+# sed 's/root/ROOT/' /etc/group   (# sed '1,$s/root/ROOT/' /etc/group)
+# sed '1,3s/root/ROOT/g' /etc/group 
+# sed 's/^....//' /etc/hosts
+# sed 's/....$//' /etc/hosts
+# sed '1,3s/^/    /' /etc/hosts
+# sed '1,3s/^    //' /etc/hosts
+getopts 함수가 어떤게 인자를 처리하는지 살펴보자.
+while getopts :xyn: name
+
+● x, y, n은 옵션들이다.
+● 명령행에서 입력한 옵션은 '+'나 '-'로 시작한다.
+● '-'나 '+'를 갖지 않는 옵션이 오면 getopts로 하여금 옵션 목록이 끝났음을 알려준다.
+● 옵션 다음에 콜론(:)을 붙이면, 이 옵션에는 인자가 필요함을 의미한다. 즉, -n 옵션에는 인자가  함께 주어져야 한다.
+● 옵션 앞에 콜론(:)을 붙이면, 유효하지 않은 옵션이 입력되었을지라도, 개발자가 이것을 처리하도록 허용함을 의미한다. 예를 들어 script.sh -p 라고 사용했을 때, -p 옵션은 유효한 옵션이 아니다. getopts는 이 사실을 개발자에게 알려주기는 하지만, 쉘은 따로 에러 메세지를 출력시키지는 않는다.
+● getopts가 호출되면 다음 옵션을 ‘-’가 없는 상태로 변수 name에 저장한다(변수 이름은 상관이 없다). 옵션 앞에 ‘+’가 붙으면, ‘+’기호와 함께 옵션을 name 변수에 저장한다. 적절하지 않은 인자가 주어지면 name에는 ? 기호를 저장한다. 만약 필요한 인자가 지정되지 않으면 name 변수에 콜론(:)을 저장한다.
+● 특수 변수 OPTIND는 1로 초기화한 후, getopts가 하나의 명령행 인자를 성공적으로 처리할 때마다 1씩 증가한다.
+● OPTARG 변수는 유효한 인자의 값을 가진다. 유효하지 않은 옵션이 주어지면 그 옵션이 OPTARG에 저장된다.getopts 함수가 어떤게 인자를 처리하는지 살펴보자.
+while getopts :xyn: name
+
+● x, y, n은 옵션들이다.
+● 명령행에서 입력한 옵션은 '+'나 '-'로 시작한다.
+● '-'나 '+'를 갖지 않는 옵션이 오면 getopts로 하여금 옵션 목록이 끝났음을 알려준다.
+● 옵션 다음에 콜론(:)을 붙이면, 이 옵션에는 인자가 필요함을 의미한다. 즉, -n 옵션에는 인자가  함께 주어져야 한다.
+● 옵션 앞에 콜론(:)을 붙이면, 유효하지 않은 옵션이 입력되었을지라도, 개발자가 이것을 처리하도록 허용함을 의미한다. 예를 들어 script.sh -p 라고 사용했을 때, -p 옵션은 유효한 옵션이 아니다. getopts는 이 사실을 개발자에게 알려주기는 하지만, 쉘은 따로 에러 메세지를 출력시키지는 않는다.
+● getopts가 호출되면 다음 옵션을 ‘-’가 없는 상태로 변수 name에 저장한다(변수 이름은 상관이 없다). 옵션 앞에 ‘+’가 붙으면, ‘+’기호와 함께 옵션을 name 변수에 저장한다. 적절하지 않은 인자가 주어지면 name에는 ? 기호를 저장한다. 만약 필요한 인자가 지정되지 않으면 name 변수에 콜론(:)을 저장한다.
+● 특수 변수 OPTIND는 1로 초기화한 후, getopts가 하나의 명령행 인자를 성공적으로 처리할 때마다 1씩 증가한다.
+● OPTARG 변수는 유효한 인자의 값을 가진다. 유효하지 않은 옵션이 주어지면 그 옵션이 OPTARG에 저장된다.
